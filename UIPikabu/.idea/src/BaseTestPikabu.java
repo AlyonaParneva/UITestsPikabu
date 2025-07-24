@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 
 import static com.codeborne.selenide.Selenide.open;
 
-public class BaseTest {
+public class BaseTestPikabu {
 
     @BeforeAll
     public static void setUp() {

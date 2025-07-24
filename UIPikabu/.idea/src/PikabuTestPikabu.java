@@ -14,7 +14,7 @@ import static io.qameta.allure.Allure.step;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PikabuTest extends BaseTest {
+public class PikabuTestPikabu extends BaseTestPikabu {
     Pikabu pikabu = new Pikabu();
 
     @Test
