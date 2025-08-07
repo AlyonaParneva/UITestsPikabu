@@ -16,16 +16,18 @@ public class BaseTestPobeda {
     @BeforeAll
     public static void setUp() {
         WebDriverManager.chromedriver().setup();
-
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--disable-blink-features=AutomationControlled");
-
-        WebDriver driver = new ChromeDriver(options);
-
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
-
-        WebDriverRunner.setWebDriver(driver);
+        Configuration.browserSize = "1920x1080";
+        Configuration.timeout = 10000;
+        open("https://www.flypobeda.ru");
+//        ChromeOptions options = new ChromeOptions();
+//        options.addArguments("--disable-blink-features=AutomationControlled");
+//
+//        WebDriver driver = new ChromeDriver(options);
+//
+//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+//        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
+//
+//        WebDriverRunner.setWebDriver(driver);
     }
 
     @AfterAll

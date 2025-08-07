@@ -13,31 +13,60 @@ import java.util.List;
 
 import static com.codeborne.selenide.Condition.attributeMatching;
 import static com.codeborne.selenide.Selenide.$$x;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.qameta.allure.Allure.step;
 import static com.codeborne.selenide.Selenide.open;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PobedaTest extends BaseTestPobeda {
     Pobeda pobeda = new Pobeda();
 
+//    @Test
+//    @DisplayName("UI тест на проверку сайта Победа через Google")
+//    @Description("Проверяем поиск через Google, переход на сайт Победа, появление баннера и смену языка")
+//    public void testPobedaFlow() {
+//        open("https://www.google.com");
+//        step("Поиск сайта компании Победа", () -> {
+//            pobeda.search(TestData.SEARCH_QUERY);
+//        });
+//        step("Переход по первой ссылке в результатах", () -> {
+//            pobeda.clickFirstResult();
+//        });
+//        step("Ожидание загрузки сайта Победа и проверка баннера", () -> {
+//            pobeda.waitForBannerKaliningradText();
+//        });
+//        step("Смена языка сайта на английский", () -> {
+//            pobeda.switchToEnglish();
+//        });
+//        step("Проверка текстов на английской версии сайта", () -> {
+//            pobeda.verifyEnglishTexts();
+//        });
+//    }
+
     @Test
     @DisplayName("UI тест на проверку сайта Победа через Google")
     @Description("Проверяем поиск через Google, переход на сайт Победа, появление баннера и смену языка")
-    public void testPobedaFlow() {
-        open("https://www.google.com");
-        step("Поиск сайта компании Победа", () -> {
-            pobeda.search(TestData.SEARCH_QUERY);
+    public void testPobeda() {
+        step("Проверка, что заголовок страницы соответствует ожидаемому", () -> {
+            String actualTitle = getWebDriver().getTitle();
+            //текст заголовка сейчас на сайте отличается немного от того, что дано в задании
+            assertEquals(TestData.EXPECTED_TITLE_POBEDA, actualTitle);
         });
-        step("Переход по первой ссылке в результатах", () -> {
-            pobeda.clickFirstResult();
+        step("Проверка отображения логотипа Победа", () -> {
+            pobeda.checkLogoPobedaIsDiplayed();
         });
-        step("Ожидание загрузки сайта Победа и проверка баннера", () -> {
-            pobeda.waitForBannerKaliningradText();
+        pobeda.hoverInformation();
+        step("Проверка что появилось всплывающее окно после наведения на пункт Информация", () -> {
+            pobeda.checkInformationModalIsDiplayed();
         });
-        step("Смена языка сайта на английский", () -> {
-            pobeda.switchToEnglish();
+        step("Проверка что в вслывающем окне есть заголовок Подготовка к полету", () -> {
+            assertEquals(TestData.PREPARING_FOR_FLIGHT_TEXT, pobeda.getPreparingForFlightText());
         });
-        step("Проверка текстов на английской версии сайта", () -> {
-            pobeda.verifyEnglishTexts();
+        step("Проверка что в вслывающем окне есть заголовок Полезная информация", () -> {
+            assertEquals(TestData.USEFUL_INFORMATION_TEXT, pobeda.getUsefulInfoText());
+        });
+        step("Проверка что в вслывающем окне есть заголовок О компании", () -> {
+            assertEquals(TestData.ABOUT_COMPANY_TEXT, pobeda.getAboutCompanyText());
         });
     }
 

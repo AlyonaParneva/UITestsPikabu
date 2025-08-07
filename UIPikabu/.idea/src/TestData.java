@@ -5,4 +5,8 @@ public class TestData {
     public static final String ERROR_TEXT = "Ошибка. Вы ввели неверные данные авторизации";
     public static final String SEARCH_QUERY = "Сайт компании Победа";
     public static final String KALININGRAD_BANNER_TEXT = "Полетели в Калининград!";
+    public static final String EXPECTED_TITLE_POBEDA = "Авиакомпания «Победа» - купить авиабилеты онлайн, дешёвые билеты на самолёт, прямые и трансферные рейсы с пересадками";
+    public static final String PREPARING_FOR_FLIGHT_TEXT = "Подготовка к полёту";
+    public static final String USEFUL_INFORMATION_TEXT = "Полезная информация";
+    public static final String ABOUT_COMPANY_TEXT = "О компании";
 }

@@ -25,6 +25,12 @@ public class Pobeda {
     SelenideElement onlineCheckinText = $x("//*[contains(text(),'Online check-in')]");
     SelenideElement manageBookingText = $x("//*[contains(text(),'Manage my booking')]");
 
+    SelenideElement logo = $x("//a[@class='dp-1f2hhsq-root-root-root']//img");
+    SelenideElement information = $x("//a[text()='Информация']");
+    SelenideElement informationModal = $x("//div[@class='dp-ukl30h-root']");
+    SelenideElement preparingForFlight = $x("//a[contains(@href,'#flight')]");
+    SelenideElement usefulInfo = $x("//a[contains(@href,'#useful')]");
+    SelenideElement aboutCompany = $x("//a[contains(@href,'#company')]");
 
     @Step("Кастомное ожидание появления баннера с текстом 'Полетели в Калининград!'")
     public void waitForBannerKaliningradText() {
@@ -58,5 +64,35 @@ public class Pobeda {
     @Step("Клик по первой ссылке в результатах поиска")
     public void clickFirstResult() {
         firstSearchResult.shouldBe(visible).click();
+    }
+
+    @Step("Проверка отображения логотипа Победы")
+    public Boolean checkLogoPobedaIsDiplayed() {
+        return logo.isDisplayed();
+    }
+
+    @Step("Наведение мышкой на пункт Информация")
+    public void hoverInformation() {
+        information.shouldBe(visible).hover();
+    }
+
+    @Step("Проверка появления всплывающего окна Информация")
+    public Boolean checkInformationModalIsDiplayed() {
+        return informationModal.shouldBe(visible).isDisplayed();
+    }
+
+    @Step("Чтение текста заголовка Подготовка к полету")
+    public String getPreparingForFlightText() {
+        return preparingForFlight.shouldBe(visible).getText();
+    }
+
+    @Step("Чтение текста заголовка Полезная информация")
+    public String getUsefulInfoText() {
+        return usefulInfo.shouldBe(visible).getText();
+    }
+
+    @Step("Чтение текста заголовка О компании")
+    public String getAboutCompanyText() {
+        return aboutCompany.shouldBe(visible).getText();
     }
 }
