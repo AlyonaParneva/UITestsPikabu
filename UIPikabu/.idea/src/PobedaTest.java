@@ -44,8 +44,7 @@ public class PobedaTest extends BaseTestPobeda {
 //    }
 
     @Test
-    @DisplayName("UI тест на проверку сайта Победа через Google")
-    @Description("Проверяем поиск через Google, переход на сайт Победа, появление баннера и смену языка")
+    @DisplayName("UI тест на проверку всплывающих элементов сайта Победа")
     public void testPobeda() {
         step("Проверка, что заголовок страницы соответствует ожидаемому", () -> {
             String actualTitle = getWebDriver().getTitle();
