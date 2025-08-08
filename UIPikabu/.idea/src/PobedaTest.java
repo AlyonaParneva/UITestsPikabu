@@ -3,8 +3,10 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -12,16 +14,26 @@ import java.time.Duration;
 import java.util.List;
 
 import static com.codeborne.selenide.Condition.attributeMatching;
-import static com.codeborne.selenide.Selenide.$$x;
+import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.qameta.allure.Allure.step;
-import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PobedaTest extends BaseTestPobeda {
-    Pobeda pobeda = new Pobeda();
-    PobedaMainHeaderPage pobedaMainHeaderPage = new PobedaMainHeaderPage(WebDriverRunner.getWebDriver());
-    PobedaInfoPopupPage pobedaInfoPopupPage=new PobedaInfoPopupPage(WebDriverRunner.getWebDriver());
+    private PobedaMainHeaderPage pobedaMainHeaderPage;
+    private PobedaInfoPopupPage pobedaInfoPopupPage;
+    private PobedaSearchBlockPage pobedaSearchBlockPage;
+    private PobedaMainPage pobedaMainPage;
+
+    @BeforeEach
+    void initPages() {
+        pobedaMainHeaderPage = new PobedaMainHeaderPage(WebDriverRunner.getWebDriver());
+        pobedaInfoPopupPage = new PobedaInfoPopupPage(WebDriverRunner.getWebDriver());
+        pobedaSearchBlockPage = new PobedaSearchBlockPage(WebDriverRunner.getWebDriver());
+        pobedaMainPage = new PobedaMainPage(WebDriverRunner.getWebDriver());
+    }
+
 
 //    @Test
 //    @DisplayName("UI тест на проверку сайта Победа через Google")
@@ -54,11 +66,11 @@ public class PobedaTest extends BaseTestPobeda {
             assertEquals(TestData.EXPECTED_TITLE_POBEDA, actualTitle);
         });
         step("Проверка отображения логотипа Победа", () -> {
-            pobedaMainHeaderPage.isLogoDisplayed();
+            assertTrue(pobedaMainHeaderPage.isLogoDisplayed(WebDriverRunner.getWebDriver()));
         });
         pobedaMainHeaderPage.hoverInformation();
         step("Проверка что появилось всплывающее окно после наведения на пункт Информация", () -> {
-            pobedaInfoPopupPage.isPopupDisplayed();
+            assertTrue(pobedaInfoPopupPage.isPopupDisplayed());
         });
         step("Проверка что в вслывающем окне есть заголовок Подготовка к полету", () -> {
             assertEquals(TestData.PREPARING_FOR_FLIGHT_TEXT, pobedaInfoPopupPage.getPreparingForFlightText());
@@ -68,6 +80,45 @@ public class PobedaTest extends BaseTestPobeda {
         });
         step("Проверка что в вслывающем окне есть заголовок О компании", () -> {
             assertEquals(TestData.ABOUT_COMPANY_TEXT, pobedaInfoPopupPage.getAboutCompanyText());
+        });
+    }
+
+    @Test
+    @DisplayName("UI тест на проверку блока поиска билетов сайта Победа")
+    public void testSearchTicketsPobeda() {
+        step("Проверка, что заголовок страницы соответствует ожидаемому", () -> {
+            String actualTitle = getWebDriver().getTitle();
+            //текст заголовка сейчас на сайте отличается немного от того, что дано в задании
+            assertEquals(TestData.EXPECTED_TITLE_POBEDA, actualTitle);
+        });
+        step("Проверка отображения логотипа Победа", () -> {
+            assertTrue(pobedaMainHeaderPage.isLogoDisplayed(WebDriverRunner.getWebDriver()));
+        });
+        step("Проверка блока поиска билетов", () -> {
+            assertTrue(pobedaSearchBlockPage.isSearchBlockDisplayed(WebDriverRunner.getWebDriver()));
+        });
+        step("Проверка отображения поля Откуда в блоке поиска билетов", () -> {
+            assertTrue(pobedaSearchBlockPage.isInputWhereFromDisplayed(WebDriverRunner.getWebDriver()));
+        });
+        step("Проверка отображения поля Куда в блоке поиска билетов", () -> {
+            assertTrue(pobedaSearchBlockPage.isInputWhereDisplayed(WebDriverRunner.getWebDriver()));
+        });
+        step("Проверка отображения поля Дата вылета Туда в блоке поиска билетов", () -> {
+            assertTrue(pobedaSearchBlockPage.isInputThereDateDisplayed(WebDriverRunner.getWebDriver()));
+        });
+        step("Проверка отображения поля Дата вылета Обратно в блоке поиска билетов", () -> {
+            assertTrue(pobedaSearchBlockPage.isInputBackDateDisplayed(WebDriverRunner.getWebDriver()));
+        });
+        step("Ввод города отправления — Минск", () -> {
+            pobedaSearchBlockPage.enterWhereFrom(WebDriverRunner.getWebDriver(), TestData.CITY_FROM);
+        });
+        step("Ввод города прибытия — Санкт-Петербург", () -> {
+            pobedaSearchBlockPage.enterWhere(WebDriverRunner.getWebDriver(), TestData.CITY_TO);
+        });
+        pobedaMainPage.closeAdsPopupIfPresent();
+        pobedaSearchBlockPage.clickOnSearchButon();
+        step("Проверка, что поле 'Туда' подсвечено красным", () -> {
+            assertTrue(pobedaSearchBlockPage.waitDepartureError(WebDriverRunner.getWebDriver()));
         });
     }
 

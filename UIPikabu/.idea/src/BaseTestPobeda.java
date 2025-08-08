@@ -2,7 +2,9 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -13,10 +15,11 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class BaseTestPobeda {
 
-    @BeforeAll
-    public static void setUp() {
+    @BeforeEach
+    public void setUp() {
         WebDriverManager.chromedriver().setup();
         Configuration.browserSize = "1920x1080";
+        Configuration.pageLoadTimeout = 120000;
         Configuration.timeout = 10000;
         open("https://www.flypobeda.ru");
 //        ChromeOptions options = new ChromeOptions();
@@ -30,8 +33,8 @@ public class BaseTestPobeda {
 //        WebDriverRunner.setWebDriver(driver);
     }
 
-    @AfterAll
-    public static void tearDown() {
+    @AfterEach
+    public void tearDown() {
         WebDriverRunner.closeWebDriver();
     }
 }

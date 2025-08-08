@@ -9,4 +9,6 @@ public class TestData {
     public static final String PREPARING_FOR_FLIGHT_TEXT = "Подготовка к полёту";
     public static final String USEFUL_INFORMATION_TEXT = "Полезная информация";
     public static final String ABOUT_COMPANY_TEXT = "О компании";
+    public static final String CITY_FROM = "Минск";
+    public static final String CITY_TO = "Санкт-Петербург";
 }
