@@ -1,21 +1,21 @@
-import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.junit5.AllureJunit5;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Keys;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 
-import static com.codeborne.selenide.Condition.attributeMatching;
-import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.numberOfWindows;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.qameta.allure.Allure.step;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+@Epic("UI тестирование сайта Победа")
+//@Description на классе — эта аннотация в Allure JUnit5 не применима к классам
+@DisplayName("Набор UI-тестов на Selenide для сайта Победа")
 public class PobedaTest extends BaseTestPobeda {
     private PobedaMainHeaderPage header;
     private PobedaInfoPopupPage infoPopup;
@@ -53,7 +53,8 @@ public class PobedaTest extends BaseTestPobeda {
 //    }
 
     @Test
-    @DisplayName("UI тест на проверку всплывающих элементов сайта Победа")
+    @Feature("Всплывающие элементы")
+    @Description("UI тест на проверку всплывающих элементов сайта Победа")
     public void testHoverWindowPobeda() {
         step("Проверка заголовка страницы", () ->
                 assertEquals(TestData.EXPECTED_TITLE_POBEDA, title())
@@ -73,7 +74,8 @@ public class PobedaTest extends BaseTestPobeda {
     }
 
     @Test
-    @DisplayName("UI тест на проверку блока поиска билетов сайта Победа")
+    @Feature("Поиск билетов")
+    @Description("UI тест на проверку блока поиска билетов сайта Победа")
     public void testSearchTicketsPobeda() {
         step("Проверка заголовка страницы", () ->
                 assertEquals(TestData.EXPECTED_TITLE_POBEDA, title())
@@ -104,7 +106,8 @@ public class PobedaTest extends BaseTestPobeda {
     }
 
     @Test
-    @DisplayName("UI тест на проверку результата поиска бронирования сайта Победа")
+    @Feature("Управление бронированием")
+    @Description("UI тест на проверку результата поиска бронирования сайта Победа")
     public void testSearchBookingPobeda() {
         step("Проверка заголовка страницы", () ->
                 assertEquals(TestData.EXPECTED_TITLE_POBEDA, title())
@@ -133,8 +136,10 @@ public class PobedaTest extends BaseTestPobeda {
             switchTo().window(1);
         });
         //на момент написания теста на данные параметры открывалась новая страница с 403 ошибкой
-        step("Проверка что появилось сообщение об ошибке", () -> {
-            assertEquals(mainPage.getErrorMessageForSearchBookingText(), TestData.ERROR_MESSAGE_403);
+        step("Проверка что появилось сообщение об ошибке (специально неправильный результат)", () -> {
+            String actual = mainPage.getErrorMessageForSearchBookingText();
+            assertEquals(TestData.BOOKING_OR_TICKET, actual,
+                    () -> "Expected=[" + TestData.BOOKING_OR_TICKET + "], Actual=[" + actual + "]");
         });
     }
 }

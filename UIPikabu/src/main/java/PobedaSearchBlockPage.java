@@ -4,7 +4,6 @@ import io.qameta.allure.Step;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class PobedaSearchBlockPage {
     private final SelenideElement searchBlock = $(".dp-m018yk-root-container");
