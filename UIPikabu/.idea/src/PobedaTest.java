@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 
 import static com.codeborne.selenide.Condition.attributeMatching;
 import static com.codeborne.selenide.Selenide.*;
@@ -122,4 +123,52 @@ public class PobedaTest extends BaseTestPobeda {
         });
     }
 
+    @Test
+    @DisplayName("UI тест на проверку результата поиска бронирования сайта Победа")
+    public void testSearchBookingPobeda() throws InterruptedException {
+        step("Проверка, что заголовок страницы соответствует ожидаемому", () -> {
+            String actualTitle = getWebDriver().getTitle();
+            //текст заголовка сейчас на сайте отличается немного от того, что дано в задании
+            assertEquals(TestData.EXPECTED_TITLE_POBEDA, actualTitle);
+        });
+        step("Проверка отображения логотипа Победа", () -> {
+            assertTrue(pobedaMainHeaderPage.isLogoDisplayed(WebDriverRunner.getWebDriver()));
+        });
+        pobedaSearchBlockPage.clickOnBookingManagement(WebDriverRunner.getWebDriver());
+        step("Проверка блока Управление бронированием", () -> {
+            assertTrue(pobedaSearchBlockPage.isBookingBlockDisplayed());
+        });
+        step("Проверка отображения поля Фамилия клиента в блоке Управление бронированием", () -> {
+            assertTrue(pobedaSearchBlockPage.isSurnameDisplayed());
+        });
+        step("Проверка отображения поля Номер бронирования или билетв в блоке Управление бронированием", () -> {
+            assertTrue(pobedaSearchBlockPage.isBookingOrTicketsDisplayed());
+        });
+        step("Проверка отображения кнопки Поиск в блоке Управление бронированием", () -> {
+            assertTrue(pobedaSearchBlockPage.isSearchBookingButtonDisplayed());
+        });
+        pobedaMainPage.closeAdsPopupIfPresent();
+        step("Ввод фамилии клиента — Qwerty", () -> {
+            pobedaSearchBlockPage.enterSurname(TestData.SURNAME);
+        });
+        step("Ввод номера бронирования или билета — XXXXXX", () -> {
+            pobedaSearchBlockPage.enterBookingOrTicket(TestData.BOOKING_OR_TICKET);
+        });
+        pobedaMainPage.closeAdsPopupIfPresent();
+        step("Клик по кнопке Поиск", () -> {
+            Set<String> oldWindows = getWebDriver().getWindowHandles();
+            pobedaSearchBlockPage.clickOnSearchBookingButton();
+            new WebDriverWait(getWebDriver(), Duration.ofSeconds(10))
+                    .until(ExpectedConditions.numberOfWindowsToBe(oldWindows.size() + 1));
+            String newWindow = getWebDriver().getWindowHandles().stream()
+                    .filter(h -> !oldWindows.contains(h))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Новое окно не появилось"));
+            getWebDriver().switchTo().window(newWindow);
+        });
+        //на момент написания теста на данные параметры открывалась новая страница с 403 ошибкой
+        step("Проверка что появилось сообщение об ошибке", () -> {
+            assertEquals(pobedaMainPage.getErroeMessageForSearchBookingText(), TestData.ERROR_MESSAGE_403);
+        });
+    }
 }

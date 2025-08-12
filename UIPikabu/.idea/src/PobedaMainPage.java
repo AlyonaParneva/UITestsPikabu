@@ -1,3 +1,4 @@
+import io.qameta.allure.Step;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -5,8 +6,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
@@ -19,6 +18,9 @@ public class PobedaMainPage {
 
     @FindBy(css = "[data-testid='ads-popup-close-btn']")
     private WebElement adsLaterBtn;
+
+    @FindBy(xpath = "//*[self::h1 or self::h2 or self::p][contains(.,'403')]")
+    private WebElement errorMessage;
 
     public PobedaMainPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -41,5 +43,10 @@ public class PobedaMainPage {
                     .until(ExpectedConditions.invisibilityOf(adsPopup));
         } catch (TimeoutException ignore) {
         }
+    }
+
+    @Step("Чтение текста ошибки о неправльных данных для поиска бронирования")
+    public String getErroeMessageForSearchBookingText() {
+        return errorMessage.getText();
     }
 }

@@ -11,4 +11,7 @@ public class TestData {
     public static final String ABOUT_COMPANY_TEXT = "О компании";
     public static final String CITY_FROM = "Минск";
     public static final String CITY_TO = "Санкт-Петербург";
+    public static final String SURNAME = "Qwerty";
+    public static final String BOOKING_OR_TICKET = "XXXXXX";
+    public static final String ERROR_MESSAGE_403 = "403 Forbidden";
 }
