@@ -1,43 +1,34 @@
+import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
+
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 
 public class PobedaInfoPopupPage {
-    @FindBy(xpath = "//div[@class='dp-ukl30h-root']")
-    private WebElement informationModal;
+    private final SelenideElement informationModal = $(".dp-ukl30h-root");
+    private final SelenideElement preparingForFlight = $x("//a[contains(@href,'#flight')]");
+    private final SelenideElement usefulInfo = $x("//a[contains(@href,'#useful')]");
+    private final SelenideElement aboutCompany = $x("//a[contains(@href,'#company')]");
 
-    @FindBy(xpath = "//a[contains(@href,'#flight')]")
-    private WebElement preparingForFlight;
-
-    @FindBy(xpath = "//a[contains(@href,'#useful')]")
-    private WebElement usefulInfo;
-
-    @FindBy(xpath = "//a[contains(@href,'#company')]")
-    private WebElement aboutCompany;
-
-    public PobedaInfoPopupPage(WebDriver driver) {
-        PageFactory.initElements(driver, this);
-    }
-
-    @Step("Проверка появления всплывающего окна Информация")
+    @Step("Проверка появления всплывающего окна «Информация»")
     public boolean isPopupDisplayed() {
-        return informationModal.isDisplayed();
+        informationModal.shouldBe(visible);
+        return true;
     }
 
-    @Step("Чтение текста заголовка Подготовка к полету")
+    @Step("Чтение текста «Подготовка к полету»")
     public String getPreparingForFlightText() {
-        return preparingForFlight.getText();
+        return preparingForFlight.shouldBe(visible).text();
     }
 
-    @Step("Чтение текста заголовка Полезная информация")
+    @Step("Чтение текста «Полезная информация»")
     public String getUsefulInfoText() {
-        return usefulInfo.getText();
+        return usefulInfo.shouldBe(visible).text();
     }
 
-    @Step("Чтение текста заголовка О компании")
+    @Step("Чтение текста «О компании»")
     public String getAboutCompanyText() {
-        return aboutCompany.getText();
+        return aboutCompany.shouldBe(visible).text();
     }
 }

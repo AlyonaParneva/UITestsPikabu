@@ -1,197 +1,122 @@
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Step;
-import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-import java.util.List;
-
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class PobedaSearchBlockPage {
-    @FindBy(xpath = "//div[@class='dp-m018yk-root-container']")
-    private WebElement searchBlock;
+    private final SelenideElement searchBlock = $(".dp-m018yk-root-container");
+    private final SelenideElement whereFrom = $x("(//input[@placeholder='Откуда'])[1]");
+    private final SelenideElement where = $x("(//input[@placeholder='Куда'])[1]");
+    private final SelenideElement thereDate = $x("(//input[@placeholder='Туда'])[1]");
+    private final SelenideElement backDate = $x("(//input[@placeholder='Обратно'])[1]");
+    private final SelenideElement firstCitySuggestion = $x("(//div[contains(@class,'dp-1eljsv-root-root-root')])[1]");
+    private final SelenideElement searchButton = $("button.dp-1ikqo3w-root-root");
+    private final SelenideElement departureContainer = $x("//div[contains(@class,'dp-1dr6zbu-root') and .//input[@placeholder='Туда']]");
+    private final SelenideElement bookingManagement = $x("//button//div[normalize-space()='Управление бронированием']");
+    private final SelenideElement surname = $x("//input[@placeholder='Фамилия клиента']");
+    private final SelenideElement bookingOrTicket = $x("//input[@placeholder='Номер бронирования или билета']");
+    private final SelenideElement searchBookingButton = $("button.dp-1vcyfp3-root-root");
+    private final SelenideElement searchBookingBlock = $(".dp-5hv1mu-root");
 
-    @FindBy(xpath = "(//input[@placeholder='Откуда'])[1]")
-    private WebElement whereFrom;
-
-    @FindBy(xpath = "(//input[@placeholder='Куда'])[1]")
-    private WebElement where;
-
-    @FindBy(xpath = "(//input[@placeholder='Туда'])[1]")
-    private WebElement thereDate;
-
-    @FindBy(xpath = "(//input[@placeholder='Обратно'])[1]")
-    private WebElement backDate;
-
-    @FindBy(xpath = "(//div[contains(@class,'dp-1eljsv-root-root-root')])[1]")
-    private WebElement firstCitySuggestion;
-
-    @FindBy(xpath = "//button[@class='dp-1ikqo3w-root-root']")
-    private WebElement searchButton;
-
-    @FindBy(xpath = "//div[contains(@class,'dp-1dr6zbu-root') and .//input[@placeholder='Туда']]")
-    private WebElement departureDateContainer;
-
-    @FindBy(xpath = "//button//div[text()='Управление бронированием']")
-    private WebElement bookingManagement;
-
-    @FindBy(xpath = "//input[@placeholder='Фамилия клиента']")
-    private WebElement surname;
-
-    @FindBy(xpath = "//input[@placeholder='Номер бронирования или билета']")
-    private WebElement bookingOrTicket;
-
-    @FindBy(xpath = "//button[@class='dp-1vcyfp3-root-root']")
-    private WebElement searchBookingButton;
-
-    @FindBy(xpath = "//div[@class='dp-5hv1mu-root']")
-    private WebElement searchBookingBlock;
-
-    public PobedaSearchBlockPage(WebDriver driver) {
-        PageFactory.initElements(driver, this);
+    @Step("Проверка отображения блока поиска билетов (со скроллом)")
+    public boolean isSearchBlockDisplayed() {
+        searchBlock.scrollIntoView(true).shouldBe(visible);
+        return true;
     }
 
-    @Step("Ввод города в поле Откуда и выбор первого совпадения")
-    public void enterWhereFrom(WebDriver driver, String city) throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(whereFrom));
-        whereFrom.click();
-        wait.until(ExpectedConditions.visibilityOf(whereFrom));
-        whereFrom.clear();
-        whereFrom.sendKeys(city);
-        wait.until(ExpectedConditions.elementToBeClickable(firstCitySuggestion));
-        firstCitySuggestion.click();
+    @Step("Поле «Откуда» отображается")
+    public boolean isInputWhereFromDisplayed() {
+        whereFrom.shouldBe(visible);
+        return true;
     }
 
-    @Step("Ввод города в поле Куда и выбор первого совпадения")
-    public void enterWhere(WebDriver driver, String city) throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(where));
-        where.click();
-        wait.until(ExpectedConditions.visibilityOf(where));
-        where.clear();
-        where.sendKeys(city);
-        wait.until(ExpectedConditions.elementToBeClickable(firstCitySuggestion));
-        firstCitySuggestion.click();
+    @Step("Поле «Куда» отображается")
+    public boolean isInputWhereDisplayed() {
+        where.shouldBe(visible);
+        return true;
     }
 
-    @Step("Проверка отображения блока поиска билетов + скролл к нему")
-    public boolean isSearchBlockDisplayed(WebDriver driver) {
-        Actions actions = new Actions(driver);
-        actions.moveToElement(searchBlock).perform();
-        return searchBlock.isDisplayed();
+    @Step("Поле «Туда» отображается")
+    public boolean isInputThereDateDisplayed() {
+        thereDate.shouldBe(visible);
+        return true;
     }
 
-    @Step("Проверка отображения поля Откуда в блоке поиска билетов")
-    public boolean isInputWhereFromDisplayed(WebDriver driver) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(whereFrom));
-        return whereFrom.isDisplayed();
+    @Step("Поле «Обратно» отображается")
+    public boolean isInputBackDateDisplayed() {
+        backDate.shouldBe(visible);
+        return true;
     }
 
-    @Step("Проверка отображения поля Куда в блоке поиска билетов")
-    public boolean isInputWhereDisplayed(WebDriver driver) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(where));
-        return where.isDisplayed();
+    @Step("Ввод города в поле «Откуда» и выбор первого совпадения")
+    public void enterWhereFrom(String city) {
+        whereFrom.shouldBe(visible).click();
+        whereFrom.setValue(city);
+        firstCitySuggestion.shouldBe(visible).click();
     }
 
-    @Step("Проверка отображения поля Дата вылета Туда в блоке поиска билетов")
-    public boolean isInputThereDateDisplayed(WebDriver driver) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(thereDate));
-        return thereDate.isDisplayed();
+    @Step("Ввод города в поле «Куда» и выбор первого совпадения")
+    public void enterWhere(String city) {
+        where.shouldBe(visible).click();
+        where.setValue(city);
+        firstCitySuggestion.shouldBe(visible).click();
     }
 
-    @Step("Проверка отображения поля Дата вылета Обратно в блоке поиска билетов")
-    public boolean isInputBackDateDisplayed(WebDriver driver) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(backDate));
-        return backDate.isDisplayed();
-    }
-
-    @Step("Клик по кнопке Поиск")
+    @Step("Клик по кнопке «Поиск» (блок билетов)")
     public void clickOnSearchButon() {
-        searchButton.click();
+        searchButton.shouldBe(enabled).click();
     }
 
-    @Step("Ждём красную обводку поля 'Туда'")
-    public boolean waitDepartureError(WebDriver driver) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.attributeToBe(departureDateContainer, "data-failed", "true"));
-        return "true".equals(departureDateContainer.getAttribute("data-failed"));
+    @Step("Ожидаем ошибку в поле «Туда» (красная обводка)")
+    public boolean waitDepartureError() {
+        departureContainer.shouldHave(attribute("data-failed", "true"));
+        return true;
     }
 
-    @Step("Клик и скролл по кнопке управление бронироваем")
-    public void clickOnBookingManagement(WebDriver driver) {
-        Actions actions = new Actions(driver);
-        actions.moveToElement(bookingManagement).perform();
-        bookingManagement.click();
+    @Step("Переход в блок «Управление бронированием»")
+    public void clickOnBookingManagement() {
+        bookingManagement.scrollIntoView(true).click();
     }
 
-    @Step("Проверка отображения поля Фамилия клиента в блоке поиска бронирования")
-    public boolean isSurnameDisplayed() {
-        WebDriver driver = getWebDriver();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(surname));
-        return surname.isDisplayed();
-    }
-
-    @Step("Проверка отображения поля Номер бронирования или билета в блоке поиска бронирования")
-    public boolean isBookingOrTicketsDisplayed() {
-        WebDriver driver = getWebDriver();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(bookingOrTicket));
-        return bookingOrTicket.isDisplayed();
-    }
-
-    @Step("Проверка отображения кнопки Поиск в блоке поиска бронирования")
-    public boolean isSearchBookingButtonDisplayed() {
-        WebDriver driver = getWebDriver();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(searchBookingButton));
-        return searchBookingButton.isDisplayed();
-    }
-
-    @Step("Проверка отображения блока управление бронированием + скролл к нему")
+    @Step("Блок «Управление бронированием» отображается (со скроллом)")
     public boolean isBookingBlockDisplayed() {
-        WebDriver driver = getWebDriver();
-        Actions actions = new Actions(driver);
-        actions.moveToElement(searchBookingBlock).perform();
-        return searchBookingBlock.isDisplayed();
+        searchBookingBlock.scrollIntoView(true).shouldBe(visible);
+        return true;
     }
 
-    @Step("Ввод фамилии клиента в блоке Управление бронированием")
-    public void enterSurname(String city) throws InterruptedException {
-        WebDriver driver = getWebDriver();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(surname));
-        surname.click();
-        wait.until(ExpectedConditions.visibilityOf(surname));
-        surname.clear();
-        surname.sendKeys(city);
+    @Step("Поле «Фамилия клиента» отображается")
+    public boolean isSurnameDisplayed() {
+        surname.shouldBe(visible);
+        return true;
     }
 
-    @Step("Ввод номера бронирования или билета в блоке Управление бронированием")
-    public void enterBookingOrTicket(String city) throws InterruptedException {
-        WebDriver driver = getWebDriver();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(bookingOrTicket));
-        bookingOrTicket.click();
-        wait.until(ExpectedConditions.visibilityOf(bookingOrTicket));
-        bookingOrTicket.clear();
-        bookingOrTicket.sendKeys(city);
+    @Step("Поле «Номер бронирования или билета» отображается")
+    public boolean isBookingOrTicketsDisplayed() {
+        bookingOrTicket.shouldBe(visible);
+        return true;
     }
 
-    @Step("Клик по кнопке Поиск в блоке Управление бронированием")
+    @Step("Кнопка «Поиск» (в управлении бронированием) отображается")
+    public boolean isSearchBookingButtonDisplayed() {
+        searchBookingButton.shouldBe(visible);
+        return true;
+    }
+
+    @Step("Ввод фамилии клиента")
+    public void enterSurname(String value) {
+        surname.shouldBe(visible).setValue(value);
+    }
+
+    @Step("Ввод номера бронирования или билета")
+    public void enterBookingOrTicket(String value) {
+        bookingOrTicket.shouldBe(visible).setValue(value);
+    }
+
+    @Step("Клик по кнопке «Поиск» в управлении бронированием")
     public void clickOnSearchBookingButton() {
-        searchBookingButton.click();
+        searchBookingButton.shouldBe(enabled).click();
     }
 }

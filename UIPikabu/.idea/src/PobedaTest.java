@@ -1,40 +1,34 @@
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Set;
 
 import static com.codeborne.selenide.Condition.attributeMatching;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.WebDriverConditions.numberOfWindows;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.qameta.allure.Allure.step;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PobedaTest extends BaseTestPobeda {
-    private PobedaMainHeaderPage pobedaMainHeaderPage;
-    private PobedaInfoPopupPage pobedaInfoPopupPage;
-    private PobedaSearchBlockPage pobedaSearchBlockPage;
-    private PobedaMainPage pobedaMainPage;
+    private PobedaMainHeaderPage header;
+    private PobedaInfoPopupPage infoPopup;
+    private PobedaSearchBlockPage searchBlock;
+    private PobedaMainPage mainPage;
 
     @BeforeEach
     void initPages() {
-        pobedaMainHeaderPage = new PobedaMainHeaderPage(WebDriverRunner.getWebDriver());
-        pobedaInfoPopupPage = new PobedaInfoPopupPage(WebDriverRunner.getWebDriver());
-        pobedaSearchBlockPage = new PobedaSearchBlockPage(WebDriverRunner.getWebDriver());
-        pobedaMainPage = new PobedaMainPage(WebDriverRunner.getWebDriver());
+        header = new PobedaMainHeaderPage();
+        infoPopup = new PobedaInfoPopupPage();
+        searchBlock = new PobedaSearchBlockPage();
+        mainPage = new PobedaMainPage();
     }
-
 
 //    @Test
 //    @DisplayName("UI тест на проверку сайта Победа через Google")
@@ -61,114 +55,86 @@ public class PobedaTest extends BaseTestPobeda {
     @Test
     @DisplayName("UI тест на проверку всплывающих элементов сайта Победа")
     public void testHoverWindowPobeda() {
-        step("Проверка, что заголовок страницы соответствует ожидаемому", () -> {
-            String actualTitle = getWebDriver().getTitle();
-            //текст заголовка сейчас на сайте отличается немного от того, что дано в задании
-            assertEquals(TestData.EXPECTED_TITLE_POBEDA, actualTitle);
-        });
-        step("Проверка отображения логотипа Победа", () -> {
-            assertTrue(pobedaMainHeaderPage.isLogoDisplayed(WebDriverRunner.getWebDriver()));
-        });
-        pobedaMainHeaderPage.hoverInformation();
-        step("Проверка что появилось всплывающее окно после наведения на пункт Информация", () -> {
-            assertTrue(pobedaInfoPopupPage.isPopupDisplayed());
-        });
-        step("Проверка что в вслывающем окне есть заголовок Подготовка к полету", () -> {
-            assertEquals(TestData.PREPARING_FOR_FLIGHT_TEXT, pobedaInfoPopupPage.getPreparingForFlightText());
-        });
-        step("Проверка что в вслывающем окне есть заголовок Полезная информация", () -> {
-            assertEquals(TestData.USEFUL_INFORMATION_TEXT, pobedaInfoPopupPage.getUsefulInfoText());
-        });
-        step("Проверка что в вслывающем окне есть заголовок О компании", () -> {
-            assertEquals(TestData.ABOUT_COMPANY_TEXT, pobedaInfoPopupPage.getAboutCompanyText());
+        step("Проверка заголовка страницы", () ->
+                assertEquals(TestData.EXPECTED_TITLE_POBEDA, title())
+        );
+        step("Проверка отображения логотипа", () ->
+                assertTrue(header.isLogoDisplayed())
+        );
+        step("Навести мышь на пункт «Информация»", header::hoverInformation);
+        step("Проверить, что появился попап «Информация»", () ->
+                assertTrue(infoPopup.isPopupDisplayed())
+        );
+        step("Проверка текстов в попапе", () -> {
+            assertEquals(TestData.PREPARING_FOR_FLIGHT_TEXT, infoPopup.getPreparingForFlightText());
+            assertEquals(TestData.USEFUL_INFORMATION_TEXT, infoPopup.getUsefulInfoText());
+            assertEquals(TestData.ABOUT_COMPANY_TEXT, infoPopup.getAboutCompanyText());
         });
     }
 
     @Test
     @DisplayName("UI тест на проверку блока поиска билетов сайта Победа")
     public void testSearchTicketsPobeda() {
-        step("Проверка, что заголовок страницы соответствует ожидаемому", () -> {
-            String actualTitle = getWebDriver().getTitle();
-            //текст заголовка сейчас на сайте отличается немного от того, что дано в задании
-            assertEquals(TestData.EXPECTED_TITLE_POBEDA, actualTitle);
+        step("Проверка заголовка страницы", () ->
+                assertEquals(TestData.EXPECTED_TITLE_POBEDA, title())
+        );
+        step("Проверка отображения логотипа", () ->
+                assertTrue(header.isLogoDisplayed())
+        );
+        step("Проверить, что блок поиска билетов отображается", () ->
+                assertTrue(searchBlock.isSearchBlockDisplayed())
+        );
+        step("Поля поиска отображаются", () -> {
+            assertTrue(searchBlock.isInputWhereFromDisplayed());
+            assertTrue(searchBlock.isInputWhereDisplayed());
+            assertTrue(searchBlock.isInputThereDateDisplayed());
+            assertTrue(searchBlock.isInputBackDateDisplayed());
         });
-        step("Проверка отображения логотипа Победа", () -> {
-            assertTrue(pobedaMainHeaderPage.isLogoDisplayed(WebDriverRunner.getWebDriver()));
-        });
-        step("Проверка блока поиска билетов", () -> {
-            assertTrue(pobedaSearchBlockPage.isSearchBlockDisplayed(WebDriverRunner.getWebDriver()));
-        });
-        step("Проверка отображения поля Откуда в блоке поиска билетов", () -> {
-            assertTrue(pobedaSearchBlockPage.isInputWhereFromDisplayed(WebDriverRunner.getWebDriver()));
-        });
-        step("Проверка отображения поля Куда в блоке поиска билетов", () -> {
-            assertTrue(pobedaSearchBlockPage.isInputWhereDisplayed(WebDriverRunner.getWebDriver()));
-        });
-        step("Проверка отображения поля Дата вылета Туда в блоке поиска билетов", () -> {
-            assertTrue(pobedaSearchBlockPage.isInputThereDateDisplayed(WebDriverRunner.getWebDriver()));
-        });
-        step("Проверка отображения поля Дата вылета Обратно в блоке поиска билетов", () -> {
-            assertTrue(pobedaSearchBlockPage.isInputBackDateDisplayed(WebDriverRunner.getWebDriver()));
-        });
-        step("Ввод города отправления — Минск", () -> {
-            pobedaSearchBlockPage.enterWhereFrom(WebDriverRunner.getWebDriver(), TestData.CITY_FROM);
-        });
-        step("Ввод города прибытия — Санкт-Петербург", () -> {
-            pobedaSearchBlockPage.enterWhere(WebDriverRunner.getWebDriver(), TestData.CITY_TO);
-        });
-        pobedaMainPage.closeAdsPopupIfPresent();
-        pobedaSearchBlockPage.clickOnSearchButon();
-        step("Проверка, что поле 'Туда' подсвечено красным", () -> {
-            assertTrue(pobedaSearchBlockPage.waitDepartureError(WebDriverRunner.getWebDriver()));
-        });
+        step("Ввести город отправления — " + TestData.CITY_FROM, () ->
+                searchBlock.enterWhereFrom(TestData.CITY_FROM)
+        );
+        step("Ввести город прибытия — " + TestData.CITY_TO, () ->
+                searchBlock.enterWhere(TestData.CITY_TO)
+        );
+        step("Закрыть рекламный попап, если он есть", mainPage::closeAdsPopupIfPresent);
+        step("Нажать «Поиск» в блоке билетов", searchBlock::clickOnSearchButon);
+        step("Проверить, что поле «Туда» подсвечено красным", () ->
+                assertTrue(searchBlock.waitDepartureError())
+        );
     }
 
     @Test
     @DisplayName("UI тест на проверку результата поиска бронирования сайта Победа")
-    public void testSearchBookingPobeda() throws InterruptedException {
-        step("Проверка, что заголовок страницы соответствует ожидаемому", () -> {
-            String actualTitle = getWebDriver().getTitle();
-            //текст заголовка сейчас на сайте отличается немного от того, что дано в задании
-            assertEquals(TestData.EXPECTED_TITLE_POBEDA, actualTitle);
+    public void testSearchBookingPobeda() {
+        step("Проверка заголовка страницы", () ->
+                assertEquals(TestData.EXPECTED_TITLE_POBEDA, title())
+        );
+        step("Проверка отображения логотипа", () ->
+                assertTrue(header.isLogoDisplayed())
+        );
+        step("Открыть блок «Управление бронированием»", searchBlock::clickOnBookingManagement);
+        step("Проверить видимость элементов блока бронирования", () -> {
+            assertTrue(searchBlock.isBookingBlockDisplayed());
+            assertTrue(searchBlock.isSurnameDisplayed());
+            assertTrue(searchBlock.isBookingOrTicketsDisplayed());
+            assertTrue(searchBlock.isSearchBookingButtonDisplayed());
         });
-        step("Проверка отображения логотипа Победа", () -> {
-            assertTrue(pobedaMainHeaderPage.isLogoDisplayed(WebDriverRunner.getWebDriver()));
-        });
-        pobedaSearchBlockPage.clickOnBookingManagement(WebDriverRunner.getWebDriver());
-        step("Проверка блока Управление бронированием", () -> {
-            assertTrue(pobedaSearchBlockPage.isBookingBlockDisplayed());
-        });
-        step("Проверка отображения поля Фамилия клиента в блоке Управление бронированием", () -> {
-            assertTrue(pobedaSearchBlockPage.isSurnameDisplayed());
-        });
-        step("Проверка отображения поля Номер бронирования или билетв в блоке Управление бронированием", () -> {
-            assertTrue(pobedaSearchBlockPage.isBookingOrTicketsDisplayed());
-        });
-        step("Проверка отображения кнопки Поиск в блоке Управление бронированием", () -> {
-            assertTrue(pobedaSearchBlockPage.isSearchBookingButtonDisplayed());
-        });
-        pobedaMainPage.closeAdsPopupIfPresent();
-        step("Ввод фамилии клиента — Qwerty", () -> {
-            pobedaSearchBlockPage.enterSurname(TestData.SURNAME);
-        });
-        step("Ввод номера бронирования или билета — XXXXXX", () -> {
-            pobedaSearchBlockPage.enterBookingOrTicket(TestData.BOOKING_OR_TICKET);
-        });
-        pobedaMainPage.closeAdsPopupIfPresent();
-        step("Клик по кнопке Поиск", () -> {
-            Set<String> oldWindows = getWebDriver().getWindowHandles();
-            pobedaSearchBlockPage.clickOnSearchBookingButton();
-            new WebDriverWait(getWebDriver(), Duration.ofSeconds(10))
-                    .until(ExpectedConditions.numberOfWindowsToBe(oldWindows.size() + 1));
-            String newWindow = getWebDriver().getWindowHandles().stream()
-                    .filter(h -> !oldWindows.contains(h))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Новое окно не появилось"));
-            getWebDriver().switchTo().window(newWindow);
+        step("Закрыть рекламный попап, если он есть", mainPage::closeAdsPopupIfPresent);
+        step("Ввести фамилию клиента — " + TestData.SURNAME, () ->
+                searchBlock.enterSurname(TestData.SURNAME)
+        );
+        step("Ввести номер бронирования/билета — " + TestData.BOOKING_OR_TICKET, () ->
+                searchBlock.enterBookingOrTicket(TestData.BOOKING_OR_TICKET)
+        );
+        step("Закрыть рекламный попап, если он есть", mainPage::closeAdsPopupIfPresent);
+        step("Нажать «Поиск» и дождаться новой вкладки", () -> {
+            searchBlock.clickOnSearchBookingButton();
+            webdriver().shouldHave(numberOfWindows(2));
+            switchTo().window(1);
         });
         //на момент написания теста на данные параметры открывалась новая страница с 403 ошибкой
         step("Проверка что появилось сообщение об ошибке", () -> {
-            assertEquals(pobedaMainPage.getErroeMessageForSearchBookingText(), TestData.ERROR_MESSAGE_403);
+            assertEquals(mainPage.getErrorMessageForSearchBookingText(), TestData.ERROR_MESSAGE_403);
         });
     }
 }

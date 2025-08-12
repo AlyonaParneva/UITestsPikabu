@@ -1,36 +1,22 @@
-import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 
 public class PobedaMainHeaderPage {
-    @FindBy(xpath = "//header//a[@href='/' and contains(@aria-label,'Победа')]//img")
-    private WebElement logo;
-
-    @FindBy(xpath = "//a[text()='Информация']")
-    private WebElement information;
-
-    public PobedaMainHeaderPage(WebDriver driver) {
-        PageFactory.initElements(driver, this);
-    }
+    private final SelenideElement logo = $("header a[href='/' ][aria-label*='Победа'] img");
+    private final SelenideElement information = $x("//a[normalize-space()='Информация']");
 
     @Step("Проверка отображения логотипа Победы")
-    public boolean isLogoDisplayed(WebDriver driver) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(logo));
-        return logo.isDisplayed();
+    public boolean isLogoDisplayed() {
+        logo.shouldBe(visible);
+        return true;
     }
 
-    @Step("Наведение мышкой на пункт Информация")
+    @Step("Наведение мышкой на пункт «Информация»")
     public void hoverInformation() {
-        Actions actions = new Actions(WebDriverRunner.getWebDriver());
-        actions.moveToElement(information).perform();
+        information.scrollIntoView(true).hover();
     }
 }
